@@ -1,12 +1,14 @@
-import java.io.BufferedReader;
+import java.io.BufferedReader; 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Scanner;
 
 public class Order {
+
+	private static final DecimalFormat df = new DecimalFormat("0.00");
 
 	public static void main(String[] args) {
 
@@ -30,7 +32,8 @@ public class Order {
 			break;
 		case 3: // View Billing
 			break;
-		case 4: // Search Cakes
+		case 4:
+			searchOrder(cakeArray);
 			break;
 		case 5:
 			System.out.println("see you next time");
@@ -84,7 +87,7 @@ public class Order {
 		int choice = 1;
 		int cakeCount = 0;
 		Cake[] cakeCart = new Cake[10]; // one order maximum can have 10 cakes
-		String resume;
+		char resume;
 		do {
 			int count = 1;
 			System.out.println("-----------------------------");
@@ -121,12 +124,17 @@ public class Order {
 			cakeCount++;
 
 			System.out.println("do you want anymore cakes?");
-			resume = input.next();
-			resume.toLowerCase();
-		} while (resume == "y"); // if input is y then will reloop again for user
+			resume = input.next().charAt(0);
+
+		} while (resume == 'y'); // if input is y then will reloop again for user
 									// to order again
-		printOrder(cakeCart, cakeCount);
-		return;
+
+		printOrder(cakeCart, cakeCount); // when printOrder method is executed meaning that user has already made
+											// payment
+		System.out.println("\t\t ====================");
+		System.out.println("\t\t  see you next time!");
+		System.out.println("\t\t ====================");
+
 	}
 
 	public static boolean cancelOrder(int choice) {
@@ -140,22 +148,23 @@ public class Order {
 	public static void printOrder(Cake[] cakeCart, int cakeCount) {
 		int numbers = 1;
 		double total = 0;
-		System.out.println("-----------------------------");
-		System.out.println("\t Your order");
-		System.out.println("-----------------------------");
-		System.out.println("  \t" + "Cakes\t" + "\tPrice");
-		for (int i = 0; i < cakeCount + 1; i++) {
-			System.out.println(numbers + ".\t" + cakeCart[i].getCake() + "\t" + cakeCart[i].getPrice());
+		System.out.println("-----------------------------------------------------");
+		System.out.println("\t\t     Your order");
+		System.out.println("-----------------------------------------------------");
+		System.out.println("  \t\t" + "Cakes\t" + "\t\tPrice");
+		System.out.println("  \t\t" + "______\t" + "\t\t______");
+		for (int i = 0; i < cakeCount; i++) {
+			System.out.println(numbers + ".\t\t" + cakeCart[i].getCake() + "\t\t" + cakeCart[i].getPrice());
 			total += cakeCart[i].getPrice();
 			numbers++;
 		}
-		System.out.println(" Total\t" + " \t\t" + total); /* cant print out dont know why */
+		System.out.println("Total\t" + " \t\t\t\t" + df.format(total)); /* cant print out dont know why */
 	}
 
 	public static void searchOrder(ArrayList<Cake> cakeArray) {
 		String search;
 		String foundCake = null;
-		Iterator iterateCake = cakeArray.iterator();
+		
 		Scanner find = new Scanner(System.in);
 		System.out.println("-----------------------------");
 		System.out.println("\t Search order");
@@ -163,25 +172,16 @@ public class Order {
 		System.out.println("kindly enter the name of the cake: ");
 		search = find.nextLine();
 
-		int place = 0;
-		Cake[] temperoryCake = new Cake[cakeArray.size()];
-		while (iterateCake.hasNext()) {
-			temperoryCake[place] = cakeArray.get(place);
-			place++;
-		} // put all the cakes info from arraylist(cakeArray) into temperoryCake array
-
-		int next = 0;
-		while (iterateCake.hasNext()) {
-			if (search == temperoryCake[next].getCake()) {
-				System.out.println(temperoryCake[next].getCakeId() + "\t" + temperoryCake[next].getCake() + "\t"
-						+ temperoryCake[next].getPrice());
-				foundCake = temperoryCake[next].getCake();
-			} else {
-				next++;
+		for(Cake c : cakeArray) { //declare temperory Cake object 'c' to loop through the cakeArray ArrayList
+			
+			if(c.getCake().equals(search)) { //object 'c' get the cake name(type String) and use the equal method 
+												//to match with the "search" String variable 
+				System.out.println("Cake\t\t\t" + "Price");
+				System.out.println("----\t\t\t" + "-----");
+				System.out.println(c.getCake() + "\t\t" + c.getPrice());
+			}else {
+				System.out.println("item not found");
 			}
-		}
-		if (foundCake == null) {
-			System.out.println("cake not found");
 		}
 	}
 
